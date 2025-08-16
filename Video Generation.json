@@ -1,0 +1,571 @@
+{
+  "name": "Video Generation",
+  "nodes": [
+    {
+      "parameters": {
+        "description": "Use the tool to think about something. It will not obtain new information or change the database but just append the thought to the log. Use it when complex reasoning or some cache memory is needed."
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        320,
+        320
+      ],
+      "id": "7b71e7ab-47ff-42f3-bd79-7d1399fc58a5",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Give us your thoughts on [advertising film for {{ $json.chatInput }}]. ",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an AI designed to generate one immersive, realistic advertising video idea based on a user-provided brand. Your output must be formatted as a single-line JSON array and follow the rules below exactly.\n\nRULES\n\nBrand Analysis (Mandatory before output):\nFor the given brand:\n\nIdentify its sector (e.g., automotive, furniture, fashion)\nIdentify its target audience (e.g., families, young professionals, creatives)\nIdentify its brand identity (e.g., minimalism, luxury, playful, futuristic)\nIdentify its core values or unique product strengths (e.g., sustainability, speed, comfort, innovation)\n✅ Use these insights to directly shape the Idea, Environment, Caption, and Sound\n\n\nNumber of ideas\n\nReturn only one idea\n\n\nBrand Focus\n\nThe brand/product itself should be central to the scene (not just people using it)\n\n\nIdea\n\nMaximum 13 words\nDescribe a viral-worthy, visually striking moment or action\nMust involve the brand/product as the main character or centerpiece\n\n\nEnvironment\n\nMaximum 20 words\nMust describe: Location (city, nature, showroom, etc.), Key visuals (logos, lights, motion, effects), Style (cinematic realism, surrealism, docu-style, etc.)\nMust reinforce the brand's image\n\n\nSound\n\nMaximum 15 words\nDescribe the primary audio elements that complement the brand and scene\n\n\nCaption\n\nShort, punchy, viral-friendly\nInclude one emoji\nExactly 12 hashtags in this order:\n\n4 brand/topic-relevant hashtags (specific to the brand/sector)\n4 all-time most popular hashtags (#love #instagood #photooftheday #fashion)\n4 currently trending hashtags (researched or approximated)\n\n\nAll hashtags lowercase\n\n\nStatus\n\nAlways set to \"for production\"\n\n### OUTPUT FORMAT (single-line JSON array)\n\n```json\n[\n  {\n    \"Caption\": \"Your short viral title with emoji #4_topic_hashtags #4_all_time_popular_hashtags #4_trending_hashtags\",\n    \"Idea\": \"Your idea under 13 words\",\n    \"Environment\": \"Your vivid setting under 20 words matching the action\",\n    \"Sound\": \"Your primary sound description under 15 words\",\n    \"Status\": \"for production\"\n  }\n]\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -64,
+        -16
+      ],
+      "id": "a4318bbf-d751-49ba-85c5-a1ca3991e736",
+      "name": "Ideas AI Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Give me a prompt hint for a model that will produce a video for this idea:\n{{ $json.idea }}\n\nThis is the environment:\n{{ $json.environment_prompt }}\n\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an AI agent that writes hyper-realistic, cinematic video prompts for Google VEO3. Each prompt should describe a short, vivid video clip highlighting a brand and its products in a dynamic, surprising, or natural way. The focus must be on the brand and its products, showing them interacting with the environment, moving or arranging themselves, or appearing in unexpected places. Minimal human presence is allowed only if it enhances the product display. The final video should look like real, cinematic found-footage or documentary-style footage.\nREQUIRED STRUCTURE (FILL IN THE BRACKETS BELOW):\n[Scene paragraph prompt here]\nFeatured product/brand: [description of the brand and products] They/It [describe subtle or dynamic movement, interaction, or transformation of the product(s), e.g., appearing, rotating, sliding, floating, glowing]. Time of Day: [day / night / dusk / etc.] Lens: [describe lens, focal length, framing style] Film Stock: [visual style, color treatment, or film emulation] Audio: (implied) [ambient sounds that complement the environment or products, e.g., wind, city, nature, packaging rustle, footsteps] Background: [brief description of the environment highlighting the products]\nRULES FOR PROMPT GENERATION\n* Single paragraph only, 750–1500 characters.\n* Focus must be on the brand, logo, or products, not humans.\n* Include one subtle or dynamic movement/action for the products.\n* Scene must feel cinematic, real, and immersive.\n* Always include the five key technical elements: Time of Day, Lens, Film Stock, Audio, and Background.\n* Minimal or subtle human presence is allowed only if it enhances the product focus.\n* Do not name human characters.\n* Do not include abstract or vague descriptions; the scene must be grounded in physical reality."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -224,
+        288
+      ],
+      "id": "b16f88b4-9b38-40c8-a42b-58b60b19a841",
+      "name": "Prompts AI Agent"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n  {\n    \"Caption\": \"Diver Removes Nets Off Whale 🐋 #whalerescue #marinelife #oceanrescue #seahelpers #love #nature #instagood #explore #viral #savenature #oceanguardians #cleanoceans\",\n    \"Idea\": \"Diver carefully cuts tangled net from distressed whale in open sea\",\n    \"Environment\": \"Open ocean, sunlight beams through water, diver and whale, cinematic realism\",\n    \"Sound\": \"Primary sound description under 15 words\",\n    \"Status\": \"for production\"\n  }\n]\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        320
+      ],
+      "id": "c8ceddd3-91e4-4484-b525-825e0e921cfa",
+      "name": "Parser"
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "minutes"
+      },
+      "id": "8cee5b14-71ad-4cac-b246-8a5f8c9c9fa1",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        720,
+        0
+      ],
+      "typeVersion": 1.1,
+      "webhookId": "ca4136c0-182a-43e0-b234-079ffe826eea"
+    },
+    {
+      "parameters": {
+        "content": "## Part 1: Fikir Üretme",
+        "height": 256,
+        "width": 692,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -272,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "ed9d0afd-2d1c-400a-a56e-999eb68378eb",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Part 2: Prompt Oluştuma",
+        "height": 256,
+        "width": 696,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -272,
+        224
+      ],
+      "typeVersion": 1,
+      "id": "189a97ac-a557-478e-832b-bafc4536a6c4",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Part 3: Video Oluşturma\n",
+        "height": 256,
+        "width": 680,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        448,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "b1299b13-af9c-47ef-9899-0e01d4106a0b",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        304
+      ],
+      "id": "71fa0b08-f840-401a-8a11-f317144a9b98",
+      "name": "Wait1",
+      "webhookId": "b296e86c-12ee-413b-98e7-9e9dfc03f8f4"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        96,
+        320
+      ],
+      "id": "1a0ce50b-76ff-48a0-9250-d9d333010aa2",
+      "name": "LLM",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ERmYNoSi3iV3nAeV",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -208,
+        -16
+      ],
+      "id": "36e56105-1b74-4000-bcc1-f4dcfe7af58d",
+      "name": "İnput",
+      "webhookId": "aafb7184-449e-464d-90e6-f2452169e037"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.wavespeed.ai/api/v3/wavespeed-ai/wan-2.2/t2v-720p",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer c3612f328a74cf415a87846a23b3ba6664443599ef480566c16167c40f0cfb2d"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"duration\": 5,\n  \"negative_prompt\": \"\",\n  \"prompt\": \"A wide-angle, static shot reveals an expansive, raw urban loft at the cusp of dawn, its concrete floors and exposed brick walls catching the first warm, golden light filtering through industrial-style windows. In the center of the vast, empty space, a series of IKEA flat-pack boxes, initially inert, begin to subtly shift. Cardboard tabs neatly fold inward as wooden panels and metal components smoothly, almost imperceptibly, slide out, rotating and aligning themselves with quiet precision. A sleek, modern bookshelf's horizontal shelves glide into vertical supports with a soft click, followed by the seamless extension of a minimalist sofa's legs and the graceful unfolding of its fabric cushions. Drawer components for a sleek desk softly lock into place, transforming the stark emptiness into a functional, vibrant home. The entire process unfolds with an organic, almost choreographed mechanical ballet, showcasing the inherent design and ease of assembly.Featured product/brand: IKEA flat-pack furniture (bookshelf, sofa, desk). They subtly and precisely slide, rotate, click, and unfold, assembling themselves into finished pieces. Time of Day: Dawn. Lens: Wide-angle cinematic prime lens (e.g., 28mm-35mm), low-angle to eye-level framing, deep depth of field. Film Stock: Warm, naturalistic digital film stock with a slightly cool color cast in the shadows, emphasizing the golden hour light. Audio: (implied) Distant, muted city hum, subtle mechanical clicks and soft thuds of joining components, gentle rustle of fabric, faint creaks of new wood settling, ambient morning birdsong from outside. Background: A minimalist, industrial urban loft with large windows revealing a cityscape fading from pre-dawn blue to warm sunrise hues.\",\n  \"seed\": -1,\n  \"size\": \"1280*720\"\n} ",
+        "options": {}
+      },
+      "id": "59a8ceee-1392-49ed-8ee6-e5677389e2ab",
+      "name": "Video Üretme",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        496,
+        0
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "url": "=https://api.wavespeed.ai/api/v3/predictions/{{ $json.data.id }}/result ",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer c3612f328a74cf415a87846a23b3ba6664443599ef480566c16167c40f0cfb2d"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9acc15ba-62b8-4e97-9a36-6394da0c96c3",
+      "name": "Sonuç Alma",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        928,
+        0
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.wavespeed.ai/api/v3/wavespeed-ai/mmaudio-v2",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer c3612f328a74cf415a87846a23b3ba6664443599ef480566c16167c40f0cfb2d"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"duration\": 8,\n  \"guidance_scale\": 4.5,\n  \"mask_away_clip\": false,\n  \"negative_prompt\": \"\",\n  \"num_inference_steps\": 25,\n  \"prompt\": \"Electric hum, sleek interface chimes, powerful synth-wave soundtrack, and a subtle mechanical whir.\",\n  \"video\": \"https://d2p7pge43lyniu.cloudfront.net/output/196ce5fb-548a-4237-a683-64b174c36d5d-u2_8db24794-5dd5-4b97-86ab-855725005ad3.mp4\"\n}",
+        "options": {}
+      },
+      "id": "27ce5942-c2a7-4d82-aae2-ccaa73878b75",
+      "name": "Ses Ekleme",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        496,
+        304
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "url": "=https://api.wavespeed.ai/api/v3/predictions/{{ $json.data.id }}/result",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer c3612f328a74cf415a87846a23b3ba6664443599ef480566c16167c40f0cfb2d"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "56b20ef3-5abe-483f-bbad-cbb285a90aa4",
+      "name": "Sonuç Alma2",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        928,
+        304
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "=1d3kcRJl7odeau0WxEt808r8uTTwse3pwNp6jDa-FQlQ",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "=0#gid=0",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "==ROW()-1",
+            "caption": "={{ $json.output[0].Caption }}",
+            "idea": "={{ $json.output[0].Idea }}",
+            "environment_prompt": "={{ $json.output[0].Environment }}",
+            "production": "={{ $json.output[0].Status }}",
+            "sound_prompt": "={{ $json.output[0].Sound }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "idea",
+              "displayName": "idea",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "caption",
+              "displayName": "caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "production",
+              "displayName": "production",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "environment_prompt",
+              "displayName": "environment_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sound_prompt",
+              "displayName": "sound_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "final_prompt",
+              "displayName": "final_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        240,
+        -16
+      ],
+      "id": "19f78fce-f353-4489-84b7-0d69e536ebac",
+      "name": "Fikir Kaydetme",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SIk0wE0nbMyV9XuV",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Part 3: Videoya Ses Ekleme\n",
+        "height": 256,
+        "width": 680,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        448,
+        224
+      ],
+      "typeVersion": 1,
+      "id": "9ecf1d8a-5b04-46fe-a5c0-99bc736e1981",
+      "name": "Sticky Note3"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ideas AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Prompts AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ideas AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Fikir Kaydetme",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prompts AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Video Üretme",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Ideas AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Sonuç Alma",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Sonuç Alma2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Ideas AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Prompts AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "İnput": {
+      "main": [
+        [
+          {
+            "node": "Ideas AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video Üretme": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sonuç Alma": {
+      "main": [
+        [
+          {
+            "node": "Ses Ekleme",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ses Ekleme": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fikir Kaydetme": {
+      "main": [
+        [
+          {
+            "node": "Prompts AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9702588b-abc4-4fcd-9c57-96341ad5c866",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a7ad241383e3d5c9bde74a6f990a82c9c7f011315020ce383b030932bbfc428c"
+  },
+  "id": "RDOZMw0WGA1xM8X3",
+  "tags": []
+}
