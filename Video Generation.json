@@ -186,7 +186,7 @@
             },
             {
               "name": "Authorization",
-              "value": "Bearer c3612f328a74cf415a87846a23b3ba6664443599ef480566c16167c40f0cfb2d"
+              "value": "Bearer api_key"
             }
           ]
         },
@@ -212,7 +212,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer c3612f328a74cf415a87846a23b3ba6664443599ef480566c16167c40f0cfb2d"
+              "value": "Bearer api_key"
             }
           ]
         },
@@ -240,7 +240,7 @@
             },
             {
               "name": "Authorization",
-              "value": "Bearer c3612f328a74cf415a87846a23b3ba6664443599ef480566c16167c40f0cfb2d"
+              "value": "Bearer api_key"
             }
           ]
         },
@@ -266,7 +266,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer c3612f328a74cf415a87846a23b3ba6664443599ef480566c16167c40f0cfb2d"
+              "value": "Bearer api_key"
             }
           ]
         },
