@@ -1,4 +1,4 @@
-# Merhaba Arkadaşlar 
+# Merhaba Arkadaşlar  🎯 
 
 ## Kullanıcıdan gelen basit girdiyi alıp n8n iş akış şemasında  LLM' ler ile işleyip kalitel reklam promptu üreten ve bu prompt ile video oluşturan çalışmamın sonuçları aşağıda ki gibidir.
 
