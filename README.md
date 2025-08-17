@@ -2,7 +2,14 @@
 
 ## Kullanıcıdan gelen basit girdiyi alıp n8n iş akış şemasında  LLM' ler ile işleyip kalitel reklam promptu üreten ve bu prompt ile video oluşturan çalışmamın sonuçları aşağıda ki gibidir.
 
-## Bu çalışmadan hem basit promptu detaylı ve kaliteli istem haline getirme, bu istem üzerinden video oluşturma ve bu videoya ses ekleme işlemi yapılmıştır.
+## 💡 Kullanıcının verdiğin basit girdi reklam açısından dikkat çeken bir fikir haline getirdim.
+
+
+## 🤖 Bu fikir üzerinden metinden Video oluşturan modele verilmek için detaylı reklam promptu ürettim..
+
+
+## 🔊 Bu ortama uygun ses eklenerek videoyu nihai hale getirdim.
+
 
 ## Kullanılan Teknolojiler Ve Araçlar 🔧
 
